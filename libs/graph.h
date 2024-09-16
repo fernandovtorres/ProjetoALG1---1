@@ -1,9 +1,10 @@
 #ifndef GRAPH_H
 #define GRAPH_H
-#include "vertice.h"
 #include <stdbool.h>
 typedef struct graph_ Graph;
+typedef struct vertice_ Vertice;
+static Vertice *create_vertice(int value, int maxEdges);
 Graph *create_graph(int maxVertices, bool isDirected, bool isWeighted);
-int numberOfVertices(Graph *graph);
-bool insertEdge(Vertice *vert1, Vertice *vert2, int weight);
+int getNumberOfVertices(Graph *graph);
+bool insertEdge(Graph *graph, int vert1, int vert2, int weight);
 #endif
