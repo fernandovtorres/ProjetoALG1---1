@@ -7,4 +7,5 @@ static Vertice *create_vertice(int value, int maxEdges);
 Graph *create_graph(int maxVertices, bool isDirected, bool isWeighted);
 int getNumberOfVertices(Graph *graph);
 bool insertEdge(Graph *graph, int vert1, int vert2, int weight);
+int getWeightVertice(Graph *graph, int vert1, int vert2);
 #endif

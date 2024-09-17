@@ -69,3 +69,10 @@ bool insertEdge(Graph *graph, int vert1, int vert2, int weight) {
   }
   return true;
 }
+
+int getWeightVertice(Graph *graph, int vert1, int vert2) {
+  if (graph) {
+    return graph->graph[vert1]->edges[vert2];
+  }
+  exit(1);
+}
