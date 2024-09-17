@@ -1,6 +1,6 @@
 #include "../graph.h"
 #include <stdlib.h>
-
+// WARNING: Turn the edges array in a "true" list
 struct graph_ {
   Vertice **graph;
   int numberOfVertices;
