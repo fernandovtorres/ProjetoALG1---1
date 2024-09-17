@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 struct answer_ {
-  int *path, minDistance, start;
+  int *path, minDistance;
 };
 
 void swap(int *n1, int *n2) {
@@ -16,7 +16,6 @@ Answer *brute_force(Graph *graph, int start) {
   if (!ans) {
     return NULL;
   }
-  ans->start = start;
   ans->path = malloc(sizeof(int) * getNumberOfVertices(graph));
   int *currPath = malloc(sizeof(int) * getNumberOfVertices(graph));
   for (int i = 0; i < getNumberOfVertices(graph); i++) {
@@ -27,23 +26,22 @@ Answer *brute_force(Graph *graph, int start) {
       currPath[i] ^= currPath[0];
     }
   }
-  ans->start = 1;
-  bestPath(graph, &ans, currPath);
+  bestPath(graph, &ans, currPath, start);
   return ans;
 }
 
-void bestPath(Graph *graph, Answer **ans, int *currPath) {
-  if ((*ans)->start == getNumberOfVertices(graph) - 1) {
+void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
+  if (start == getNumberOfVertices(graph) - 1) {
     int current_distance = totalDistance(graph, currPath);
     if (current_distance < (*ans)->minDistance) {
       (*ans)->minDistance = current_distance;
       memcpy((*ans)->path, currPath, getNumberOfVertices(graph) * sizeof(int));
     }
   } else {
-    for (int i = (*ans)->start; i < getNumberOfVertices(graph); i++) {
-      swap(&currPath[(*ans)->start], &currPath[i]);
-      totalDistance(graph, currPath);
-      swap(&currPath[(*ans)->start], &currPath[i]);
+    for (int i = start; i < getNumberOfVertices(graph); i++) {
+      swap(&currPath[start], &currPath[i]);
+      bestPath(graph, ans, currPath, start + 1);
+      swap(&currPath[start], &currPath[i]);
     }
   }
 }

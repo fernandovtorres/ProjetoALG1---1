@@ -4,7 +4,7 @@
 #include <stdlib.h>
 typedef struct answer_ Answer;
 Answer *brute_force(Graph *graph, int start);
-void bestPath(Graph *graph, Answer **ans, int *currPath);
+void bestPath(Graph *graph, Answer **ans, int *currPath, int start);
 int totalDistance(Graph *graph, int *currPath);
 
 #endif
