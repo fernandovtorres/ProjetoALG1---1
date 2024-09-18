@@ -1,6 +1,6 @@
 #include "../graph.h"
 #include <stdlib.h>
-// WARNING: Turn the edges array in a "true" list
+// TODO: Turn the edges array in a "true" list
 struct graph_ {
   Vertice **graph;
   int numberOfVertices;
@@ -18,8 +18,19 @@ static Vertice *create_vertice(int value, int maxEdges) {
     return NULL;
   }
   vertice->value = value;
-  vertice->edges = malloc(sizeof(int) * maxEdges);
+  vertice->edges = calloc(maxEdges, sizeof(int));
   return vertice;
+}
+
+static bool deleteVertice(Vertice **vertice) {
+  if (*vertice) {
+    free((*vertice)->edges);
+    (*vertice)->edges = NULL;
+    free(*vertice);
+    *vertice = NULL;
+    return true;
+  }
+  return false;
 }
 
 Graph *create_graph(int maxVertices, bool isDirected, bool isWeighted) {
@@ -30,9 +41,9 @@ Graph *create_graph(int maxVertices, bool isDirected, bool isWeighted) {
   graph->isDirected = isDirected;
   graph->isWeighted = isWeighted;
   graph->numberOfVertices = maxVertices;
-  graph->graph = malloc(sizeof(Vertice *) * maxVertices);
-  for (int i = 0; i < maxVertices; i++) {
-    Vertice *vertice = create_vertice(i, maxVertices - 1);
+  graph->graph = malloc(sizeof(Vertice *) * (maxVertices + 1));
+  for (int i = 1; i < maxVertices + 1; i++) {
+    Vertice *vertice = create_vertice(i, maxVertices + 1);
     if (!vertice) {
       return NULL;
     }
@@ -75,4 +86,16 @@ int getWeightVertice(Graph *graph, int vert1, int vert2) {
     return graph->graph[vert1]->edges[vert2];
   }
   exit(1);
+}
+
+void deleteGraph(Graph **graph, int maxVertices) {
+  if (*graph) {
+    for (int i = 1; i < maxVertices + 1; i++) {
+      deleteVertice(&((*graph)->graph[i]));
+    }
+    free((*graph)->graph);
+    (*graph)->graph = NULL;
+    free(*graph);
+    *graph = NULL;
+  }
 }
