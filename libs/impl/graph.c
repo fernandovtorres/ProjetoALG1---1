@@ -1,6 +1,5 @@
 #include "../graph.h"
 #include <stdlib.h>
-// TODO: Turn the edges array in a "true" list
 struct graph_ {
   Vertice **graph;
   int numberOfVertices;
@@ -41,9 +40,9 @@ Graph *create_graph(int maxVertices, bool isDirected, bool isWeighted) {
   graph->isDirected = isDirected;
   graph->isWeighted = isWeighted;
   graph->numberOfVertices = maxVertices;
-  graph->graph = malloc(sizeof(Vertice *) * (maxVertices + 1));
-  for (int i = 1; i < maxVertices + 1; i++) {
-    Vertice *vertice = create_vertice(i, maxVertices + 1);
+  graph->graph = malloc(sizeof(Vertice *) * (maxVertices));
+  for (int i = 0; i < maxVertices; i++) {
+    Vertice *vertice = create_vertice(i, maxVertices);
     if (!vertice) {
       return NULL;
     }
@@ -60,9 +59,11 @@ int getNumberOfVertices(Graph *graph) {
 }
 
 bool insertEdge(Graph *graph, int vert1, int vert2, int weight) {
-  if (!graph || !vert1 || !vert2) {
+  if (!graph) {
     return false;
   }
+  vert1--;
+  vert2--;
   if (!graph->isDirected) {
     if (graph->isWeighted) {
       (graph->graph[vert1])->edges[vert2] = weight;
@@ -83,14 +84,14 @@ bool insertEdge(Graph *graph, int vert1, int vert2, int weight) {
 
 int getWeightVertice(Graph *graph, int vert1, int vert2) {
   if (graph) {
-    return graph->graph[vert1]->edges[vert2];
+    return graph->graph[--vert1]->edges[--vert2];
   }
   exit(1);
 }
 
 void deleteGraph(Graph **graph, int maxVertices) {
   if (*graph) {
-    for (int i = 1; i < maxVertices + 1; i++) {
+    for (int i = 0; i < maxVertices; i++) {
       deleteVertice(&((*graph)->graph[i]));
     }
     free((*graph)->graph);

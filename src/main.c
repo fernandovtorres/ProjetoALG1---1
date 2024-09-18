@@ -1,7 +1,7 @@
 #include "../libs/branch.h"
 #include "../libs/brute.h"
 #include <stdio.h>
-// TODO: Turn into a 0-indexed system
+
 int main(void) {
   int numberOfCities = 0, vert1 = 0, vert2 = 0, weight = 0, start = 0;
   scanf(" %d", &numberOfCities);
@@ -14,7 +14,7 @@ int main(void) {
   Answer *ans = brute_force(graph, start);
   printf("Cidade Origem: %d\n", start);
   printf("Rota: ");
-  for (int i = 1; i < numberOfCities + 1; i++) {
+  for (int i = 0; i < numberOfCities; i++) {
     printf("%d - ", path(ans, i));
   }
   printf("%d\n", start);

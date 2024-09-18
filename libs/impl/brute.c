@@ -17,18 +17,18 @@ Answer *brute_force(Graph *graph, int start) {
   if (!ans) {
     return NULL;
   }
-  ans->path = malloc(sizeof(int) * (getNumberOfVertices(graph) + 1));
+  start--;
+  ans->path = malloc(sizeof(int) * (getNumberOfVertices(graph)));
   ans->minDistance = INT_MAX;
-  int *currPath = malloc(sizeof(int) * (getNumberOfVertices(graph) + 1));
-  for (int i = 1; i < getNumberOfVertices(graph) + 1; i++) {
-    currPath[i] = i;
+  int *currPath = malloc(sizeof(int) * (getNumberOfVertices(graph)));
+  for (int i = 0; i < getNumberOfVertices(graph); i++) {
+    currPath[i] = i + 1;
     if (i == start) {
-      currPath[i] ^= currPath[1];
-      currPath[1] ^= currPath[i];
-      currPath[i] ^= currPath[1];
+      swap(&currPath[i], &currPath[0]);
     }
   }
-  bestPath(graph, &ans, currPath, 2);
+  bestPath(graph, &ans, currPath, 1);
+  free(currPath);
   return ans;
 }
 
@@ -50,11 +50,11 @@ void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
 
 int totalDistance(Graph *graph, int *currPath) {
   int total = 0;
-  for (int i = 2; i < getNumberOfVertices(graph) + 1; i++) {
+  for (int i = 1; i < getNumberOfVertices(graph); i++) {
     total += getWeightVertice(graph, currPath[i - 1], currPath[i]);
   }
-  total += getWeightVertice(graph, currPath[getNumberOfVertices(graph)],
-                            currPath[1]);
+  total += getWeightVertice(graph, currPath[getNumberOfVertices(graph) - 1],
+                            currPath[0]);
   return total;
 }
 
