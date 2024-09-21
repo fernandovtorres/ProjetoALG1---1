@@ -11,13 +11,6 @@ int pa(double n){
     return ceil((n * (n + 1)) / 2); 
 }
 
-Answer *tsp(Graph *graph, int numcidades){
-    graph = diagonal(graph, numcidades); //arrumo a diagonal principal pra ter um tamanho grandao (preciso disso no algoritmo)
-    int distmin = distanciamin(graph, numcidades);
-    
-
-}
-
 int distanciamin(Graph *graph, int numcidades){ //aqui vou calcular a distancia minima que duas cidades podem ter
     int aux = 0, soma = 0; //o auxiliar vai pegar o menor valor da linha/coluna . a soma vou usar pra achar essa distancia minima aí
 
@@ -54,13 +47,22 @@ Graph *diagonal(Graph *graph, int numcidades){ //so coloca a diagonal principal 
     }
 }
 
+//aqui tanho que fazer uma funçao que calula as distancia e acha a melhor opcao de cidade seguinte (to pensando em fazer algo recursivo talvez...)
+
+Answer *tsp(Graph *graph, int numcidades){
+    graph = diagonal(graph, numcidades); //arrumo a diagonal principal pra ter um tamanho grandao (preciso disso no algoritmo)
+    int distmin = distanciamin(graph, numcidades);
+
+
+}
+
 int main(void){
 
     int numcidades = 0, vert1 = 0, vert2 = 0, peso = 0, comeco = 0; //peguei do codigo do fernando. só pra pegar a entrada e arrumar o tad isso aq
     scanf(" %d", &numcidades);
     scanf(" %d", &comeco);
     Graph *graph = create_graph(numcidades, 0, 1);
-    for (int i = 0; i < pa(numcidades - 1); i++) {
+    for(int i = 0; i < pa(numcidades - 1); i++){
         scanf(" %d %d %d", &vert1, &vert2, &peso);
         insertEdge(graph, vert1, vert2, peso);
     }
