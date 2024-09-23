@@ -2,6 +2,7 @@
 #include "../libs/brute.h"
 #include <math.h>
 #include <stdio.h>
+
 int pa(double n) { return ceil((n * (n + 1)) / 2); }
 
 int main(void) {

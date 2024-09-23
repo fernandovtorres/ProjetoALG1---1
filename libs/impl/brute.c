@@ -32,7 +32,7 @@ Answer *brute_force(Graph *graph, int start) {
   return ans;
 }
 
-void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
+static void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
   if (start >= getNumberOfVertices(graph)) {
     int current_distance = totalDistance(graph, currPath);
     if (current_distance < (*ans)->minDistance) {
@@ -48,13 +48,13 @@ void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
   }
 }
 
-int totalDistance(Graph *graph, int *currPath) {
+static int totalDistance(Graph *graph, int *currPath) {
   int total = 0;
   for (int i = 1; i < getNumberOfVertices(graph); i++) {
-    total += getWeightVertice(graph, currPath[i - 1], currPath[i]);
+    total += getWeightEdge(graph, currPath[i - 1], currPath[i]);
   }
-  total += getWeightVertice(graph, currPath[getNumberOfVertices(graph) - 1],
-                            currPath[0]);
+  total += getWeightEdge(graph, currPath[getNumberOfVertices(graph) - 1],
+                         currPath[0]);
   return total;
 }
 
