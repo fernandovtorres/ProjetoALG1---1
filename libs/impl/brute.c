@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+
 struct answer_ {
   int *path, minDistance;
 };
@@ -51,7 +52,15 @@ static void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
 static int totalDistance(Graph *graph, int *currPath) {
   int total = 0;
   for (int i = 1; i < getNumberOfVertices(graph); i++) {
-    total += getWeightEdge(graph, currPath[i - 1], currPath[i]);
+    int pesoAtual = getWeightEdge(graph, currPath[i - 1], currPath[i]);
+    if (pesoAtual == 0) {
+      return INT_MAX;
+    }
+    total += pesoAtual;
+  }
+  if (getWeightEdge(graph, currPath[getNumberOfVertices(graph) - 1],
+                    currPath[0]) == 0) {
+    return INT_MAX;
   }
   total += getWeightEdge(graph, currPath[getNumberOfVertices(graph) - 1],
                          currPath[0]);
