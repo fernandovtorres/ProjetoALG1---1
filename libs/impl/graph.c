@@ -1,102 +1,84 @@
 #include "../graph.h"
 #include <stdlib.h>
+
 struct graph_ {
-  Vertice **graph;
-  int numberOfVertices;
+  int numVertices;
+  Vertice **vertices;
   bool isDirected, isWeighted;
 };
 
-struct vertice_ {
-  int value;
-  int *edges;
-};
-
-static Vertice *create_vertice(int value, int maxEdges) {
-  Vertice *vertice = malloc(sizeof(Vertice));
-  if (!vertice) {
-    return NULL;
-  }
-  vertice->value = value;
-  vertice->edges = calloc(maxEdges, sizeof(int));
-  return vertice;
-}
-
-static bool deleteVertice(Vertice **vertice) {
-  if (*vertice) {
-    free((*vertice)->edges);
-    (*vertice)->edges = NULL;
-    free(*vertice);
-    *vertice = NULL;
-    return true;
-  }
-  return false;
-}
-
-Graph *create_graph(int maxVertices, bool isDirected, bool isWeighted) {
+Graph *createGraph(int vertices, bool isDirected, bool isWeighted) {
   Graph *graph = malloc(sizeof(Graph));
   if (!graph) {
     return NULL;
   }
-  graph->isDirected = isDirected;
-  graph->isWeighted = isWeighted;
-  graph->numberOfVertices = maxVertices;
-  graph->graph = malloc(sizeof(Vertice *) * (maxVertices));
-  for (int i = 0; i < maxVertices; i++) {
-    Vertice *vertice = create_vertice(i, maxVertices);
-    if (!vertice) {
+  graph->vertices = createVerticeList(vertices);
+  if (!graph->vertices) {
+    return NULL;
+  }
+  for (int i = 0; i < vertices; i++) {
+    graph->vertices[i] = createVertice(vertices);
+    if (!graph->vertices[i]) {
       return NULL;
     }
-    graph->graph[vertice->value] = vertice;
   }
+  graph->numVertices = vertices;
+  graph->isDirected = isDirected;
+  graph->isWeighted = isWeighted;
   return graph;
 }
 
-int getNumberOfVertices(Graph *graph) {
-  if (graph) {
-    return graph->numberOfVertices;
-  }
-  exit(1);
-}
-
-bool insertEdge(Graph *graph, int vert1, int vert2, int weight) {
-  if (!graph) {
-    return false;
-  }
-  vert1--;
-  vert2--;
-  if (!graph->isDirected) {
+bool insertEdge(Graph *graph, int vertice1, int vertice2, int weight) {
+  vertice1--;
+  vertice2--;
+  if (graph->isDirected) {
     if (graph->isWeighted) {
-      (graph->graph[vert1])->edges[vert2] = weight;
-      (graph->graph[vert2])->edges[vert1] = weight;
+      createConnection(graph->vertices[vertice1], vertice2, weight);
+      return true;
     } else {
-      (graph->graph[vert1])->edges[vert2] = 1;
-      (graph->graph[vert2])->edges[vert1] = 1;
+      createConnection(graph->vertices[vertice1], vertice2, 0);
+      return true;
     }
   } else {
     if (graph->isWeighted) {
-      (graph->graph[vert1])->edges[vert2] = weight;
+      createConnection(graph->vertices[vertice1], vertice2, weight);
+      createConnection(graph->vertices[vertice2], vertice1, weight);
+      return true;
     } else {
-      (graph->graph[vert1])->edges[vert2] = 1;
+      createConnection(graph->vertices[vertice1], vertice2, 0);
+      createConnection(graph->vertices[vertice2], vertice1, 0);
+      return true;
     }
   }
-  return true;
+  return false;
 }
 
-int getWeightEdge(Graph *graph, int vert1, int vert2) {
-  if (graph) {
-    return graph->graph[--vert1]->edges[--vert2];
+int getWeightEdge(Graph *graph, int vertice1, int vertice2) {
+  if (!graph) {
+    exit(1);
   }
-  exit(1);
+  vertice1--;
+  vertice2--;
+  return getWeightConnection(graph->vertices[vertice1], vertice2);
 }
 
-void deleteGraph(Graph **graph, int maxVertices) {
+int getNumberVertices(Graph *graph) {
+  if (!graph) {
+    exit(1);
+  }
+  return graph->numVertices;
+}
+
+void deleteGraph(Graph **graph) {
   if (*graph) {
-    for (int i = 0; i < maxVertices; i++) {
-      deleteVertice(&((*graph)->graph[i]));
+    int vertices = (*graph)->numVertices;
+    for (int i = 0; i < vertices; i++) {
+      deleteVertice(&(*graph)->vertices[i]);
     }
-    free((*graph)->graph);
-    (*graph)->graph = NULL;
-    free(*graph);
-    *graph = NULL;
+    free((*graph)->vertices);
+    (*graph)->vertices = NULL;
+    free((*graph));
+    (*graph) = NULL;
   }
+  return;
 }

@@ -19,10 +19,10 @@ Answer *brute_force(Graph *graph, int start) {
     return NULL;
   }
   start--;
-  ans->path = malloc(sizeof(int) * (getNumberOfVertices(graph)));
+  ans->path = malloc(sizeof(int) * (getNumberVertices(graph)));
   ans->minDistance = INT_MAX;
-  int *currPath = malloc(sizeof(int) * (getNumberOfVertices(graph)));
-  for (int i = 0; i < getNumberOfVertices(graph); i++) {
+  int *currPath = malloc(sizeof(int) * (getNumberVertices(graph)));
+  for (int i = 0; i < getNumberVertices(graph); i++) {
     currPath[i] = i + 1;
     if (i == start) {
       swap(&currPath[i], &currPath[0]);
@@ -34,14 +34,14 @@ Answer *brute_force(Graph *graph, int start) {
 }
 
 static void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
-  if (start >= getNumberOfVertices(graph)) {
+  if (start >= getNumberVertices(graph)) {
     int current_distance = totalDistance(graph, currPath);
     if (current_distance < (*ans)->minDistance) {
       (*ans)->minDistance = current_distance;
-      memcpy((*ans)->path, currPath, getNumberOfVertices(graph) * sizeof(int));
+      memcpy((*ans)->path, currPath, getNumberVertices(graph) * sizeof(int));
     }
   } else {
-    for (int i = start; i < getNumberOfVertices(graph); i++) {
+    for (int i = start; i < getNumberVertices(graph); i++) {
       swap(&currPath[start], &currPath[i]);
       bestPath(graph, ans, currPath, start + 1);
       swap(&currPath[start], &currPath[i]);
@@ -51,19 +51,19 @@ static void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
 
 static int totalDistance(Graph *graph, int *currPath) {
   int total = 0;
-  for (int i = 1; i < getNumberOfVertices(graph); i++) {
+  for (int i = 1; i < getNumberVertices(graph); i++) {
     int pesoAtual = getWeightEdge(graph, currPath[i - 1], currPath[i]);
     if (pesoAtual == 0) {
       return INT_MAX;
     }
     total += pesoAtual;
   }
-  if (getWeightEdge(graph, currPath[getNumberOfVertices(graph) - 1],
+  if (getWeightEdge(graph, currPath[getNumberVertices(graph) - 1],
                     currPath[0]) == 0) {
     return INT_MAX;
   }
-  total += getWeightEdge(graph, currPath[getNumberOfVertices(graph) - 1],
-                         currPath[0]);
+  total +=
+      getWeightEdge(graph, currPath[getNumberVertices(graph) - 1], currPath[0]);
   return total;
 }
 
