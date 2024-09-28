@@ -17,7 +17,7 @@ Graph *createGraph(int vertices, bool isDirected, bool isWeighted) {
     return NULL;
   }
   for (int i = 0; i < vertices; i++) {
-    graph->vertices[i] = createVertice(vertices);
+    graph->vertices[i] = createVertice();
     if (!graph->vertices[i]) {
       return NULL;
     }

@@ -1,9 +1,7 @@
 #include "../vertice.h"
 #include <stdlib.h>
 
-/* TODO: Garantir que dê para introduzir em ordem não crescente*/
 struct vertice_ {
-  int *connections;
   Edge *head;
 };
 
@@ -20,13 +18,9 @@ Vertice **createVerticeList(int vertices) {
   return verticeList;
 }
 
-Vertice *createVertice(int maxConnections) {
+Vertice *createVertice(void) {
   Vertice *vertice = malloc(sizeof(Vertice));
   if (!vertice) {
-    return NULL;
-  }
-  vertice->connections = calloc(maxConnections, sizeof(int));
-  if (!(vertice->connections)) {
     return NULL;
   }
   vertice->head = NULL;
@@ -54,19 +48,24 @@ bool createConnection(Vertice *vert, int index, int weight) {
     return true;
   }
   Edge *dummy = vert->head;
-  while (dummy->next != NULL) {
-    if (dummy->next->index >= edge->index) {
-      break;
+  if (dummy->index >= edge->index) {
+    edge->next = dummy;
+    vert->head = edge;
+  } else {
+    while (dummy->next != NULL) {
+      if (dummy->next->index >= edge->index) {
+        break;
+      }
+      dummy = dummy->next;
     }
-    dummy = dummy->next;
+    edge->next = dummy->next;
+    dummy->next = edge;
   }
-  edge->next = dummy->next;
-  dummy->next = edge;
   return true;
 }
 
 int getWeightConnection(Vertice *vert, int vert2) {
-  int weight = 0;
+  int weight = -1;
   Edge *dummy = vert->head;
   while (dummy && dummy->index <= vert2) {
     if (dummy->index == vert2) {
@@ -93,8 +92,6 @@ void deleteVertice(Vertice **vertice) {
       (*vertice)->head = (*vertice)->head->next;
       deleteEdge(&dummy);
     }
-    free((*vertice)->connections);
-    (*vertice)->connections = NULL;
     free(*vertice);
     *vertice = NULL;
   }

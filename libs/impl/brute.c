@@ -27,15 +27,15 @@ Answer *brute_force(Graph *graph, int start) {
     if (i == start) {
       swap(&currPath[i], &currPath[0]);
     }
-  }
-  bestPath(graph, &ans, currPath, 1);
+  } // O(n) sendo n o número de vértices
+  bestPath(graph, &ans, currPath, 1); // O(n!) -> (n-1)!
   free(currPath);
   return ans;
 }
 
 static void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
   if (start >= getNumberVertices(graph)) {
-    int current_distance = totalDistance(graph, currPath);
+    int current_distance = totalDistance(graph, currPath); // O(n)
     if (current_distance < (*ans)->minDistance) {
       (*ans)->minDistance = current_distance;
       memcpy((*ans)->path, currPath, getNumberVertices(graph) * sizeof(int));
@@ -43,9 +43,10 @@ static void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
   } else {
     for (int i = start; i < getNumberVertices(graph); i++) {
       swap(&currPath[start], &currPath[i]);
-      bestPath(graph, ans, currPath, start + 1);
+      bestPath(graph, ans, currPath,
+               start + 1); // O(n-1) -> chama sempre um for de n-1 elementos
       swap(&currPath[start], &currPath[i]);
-    }
+    } // O(n)
   }
 }
 
@@ -53,13 +54,13 @@ static int totalDistance(Graph *graph, int *currPath) {
   int total = 0;
   for (int i = 1; i < getNumberVertices(graph); i++) {
     int pesoAtual = getWeightEdge(graph, currPath[i - 1], currPath[i]);
-    if (pesoAtual == 0) {
+    if (pesoAtual == -1) {
       return INT_MAX;
     }
     total += pesoAtual;
   }
   if (getWeightEdge(graph, currPath[getNumberVertices(graph) - 1],
-                    currPath[0]) == 0) {
+                    currPath[0]) == -1) {
     return INT_MAX;
   }
   total +=
