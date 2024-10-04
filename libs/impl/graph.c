@@ -1,91 +1,102 @@
-#include "../brute.h"
-#include <limits.h>
+#include "../graph.h"
 #include <stdlib.h>
-#include <string.h>
 
-struct answer_ {
-  int *path, minDistance;
+struct graph_ {
+  int numVertices;
+  Vertice **vertices;
+  bool isDirected, isWeighted;
 };
 
-void swap(int *n1, int *n2) {
-  int temp = *n1;
-  *n1 = *n2;
-  *n2 = temp;
-}
-
-Answer *brute_force(Graph *graph, int start) {
-  Answer *ans = malloc(sizeof(Answer));
-  if (!ans) {
+Graph *createGraph(int vertices, bool isDirected, bool isWeighted) {
+  Graph *graph = malloc(sizeof(Graph));
+  if (!graph) {
     return NULL;
   }
-  start--;
-  ans->path = malloc(sizeof(int) * (getNumberVertices(graph)));
-  ans->minDistance = INT_MAX;
-  int *currPath = malloc(sizeof(int) * (getNumberVertices(graph)));
-  for (int i = 0; i < getNumberVertices(graph); i++) {
-    currPath[i] = i + 1;
-    if (i == start) {
-      swap(&currPath[i], &currPath[0]);
+  graph->vertices = createVerticeList(vertices);
+  if (!graph->vertices) {
+    free(graph);
+    graph = NULL;
+    return NULL;
+  }
+  for (int i = 0; i < vertices; i++) {
+    graph->vertices[i] = createVertice();
+    if (!graph->vertices[i]) {
+      while (i--) {
+        deleteVertice(&graph->vertices[i]);
+      }
+      free(graph->vertices);
+      graph->vertices = NULL;
+      free(graph);
+      graph = NULL;
+      return NULL;
     }
-  } // O(n) sendo n o número de vértices
-  bestPath(graph, &ans, currPath, 1); // O(n!) -> (n-1)!
-  free(currPath);
-  return ans;
+  }
+  graph->numVertices = vertices;
+  graph->isDirected = isDirected;
+  graph->isWeighted = isWeighted;
+  return graph;
 }
 
-static void bestPath(Graph *graph, Answer **ans, int *currPath, int start) {
-  if (start >= getNumberVertices(graph)) {
-    int current_distance = totalDistance(graph, currPath); // O(n)
-    if (current_distance < (*ans)->minDistance) {
-      (*ans)->minDistance = current_distance;
-      memcpy((*ans)->path, currPath, getNumberVertices(graph) * sizeof(int));
+bool insertEdge(Graph *graph, int vertice1, int vertice2, int weight) {
+  vertice1--;
+  vertice2--;
+  if (graph->isDirected) {
+    if (graph->isWeighted) {
+      createConnection(graph->vertices[vertice1], vertice2, weight);
+      return true;
+    } else {
+      createConnection(graph->vertices[vertice1], vertice2, 0);
+      return true;
     }
   } else {
-    for (int i = start; i < getNumberVertices(graph); i++) {
-      swap(&currPath[start], &currPath[i]);
-      bestPath(graph, ans, currPath,
-               start + 1); // O(n-1) -> chama sempre um for de n-1 elementos
-      swap(&currPath[start], &currPath[i]);
-    } // O(n)
-  }
-}
-
-static int totalDistance(Graph *graph, int *currPath) {
-  int total = 0;
-  for (int i = 1; i < getNumberVertices(graph); i++) {
-    int pesoAtual = getWeightEdge(graph, currPath[i - 1], currPath[i]);
-    if (pesoAtual == -1) {
-      return INT_MAX;
+    if (graph->isWeighted) {
+      createConnection(graph->vertices[vertice1], vertice2, weight);
+      createConnection(graph->vertices[vertice2], vertice1, weight);
+      return true;
+    } else {
+      createConnection(graph->vertices[vertice1], vertice2, 0);
+      createConnection(graph->vertices[vertice2], vertice1, 0);
+      return true;
     }
-    total += pesoAtual;
   }
-  if (getWeightEdge(graph, currPath[getNumberVertices(graph) - 1],
-                    currPath[0]) == -1) {
-    return INT_MAX;
-  }
-  total +=
-      getWeightEdge(graph, currPath[getNumberVertices(graph) - 1], currPath[0]);
-  return total;
+  return false;
 }
 
-int path(Answer *ans, int index) {
-  if (ans) {
-    return ans->path[index];
+int getWeightEdge(Graph *graph, int vertice1, int vertice2) {
+  if (!graph) {
+    exit(1);
   }
-  exit(1);
+  vertice1--;
+  vertice2--;
+  return getWeightConnection(graph->vertices[vertice1], vertice2);
 }
 
-int getMinDist(Answer *ans) {
-  if (ans) {
-    return ans->minDistance;
+int getNumberVertices(Graph *graph) {
+  if (!graph) {
+    exit(1);
   }
-  exit(1);
+  return graph->numVertices;
 }
 
-void deleteAnswer(Answer **ans) {
-  if (*ans) {
-    free((*ans)->path);
-    free(*ans);
+Graph *cloneGraph(Graph *graph) {
+  Graph *newGraph =
+      createGraph(graph->numVertices, graph->isDirected, graph->isWeighted);
+  for (int i = 0; i < graph->numVertices; i++) {
+    newGraph->vertices[i] = cloneVertice(graph->vertices[i]);
+  }
+  return newGraph;
+}
+
+void deleteGraph(Graph **graph) {
+  if (*graph) {
+    int vertices = (*graph)->numVertices;
+    for (int i = 0; i < vertices; i++) {
+      deleteVertice(&(*graph)->vertices[i]);
+    }
+    free((*graph)->vertices);
+    (*graph)->vertices = NULL;
+    free((*graph));
+    (*graph) = NULL;
   }
   return;
 }

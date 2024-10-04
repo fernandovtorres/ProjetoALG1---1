@@ -22,7 +22,7 @@ int pa(double n){ //nao sei pra que serve mas usa na entrada, vou acreditar que 
     return ceil((n * (n + 1)) / 2); 
 }
 
-int distanciamin(Graph *graph, int numcidades){ //aqui vou calcular a distancia minima que duas cidades podem ter (uso a partir da primeira cidade e só)
+int distanciamin(Graph *graph, int numcidades){ //aqui vou calcular a distancia minima que duas cidades podem ter pra primeira vez que mudo de cidade
     int aux = 0, soma = 0; //o auxiliar vai pegar o menor valor da linha/coluna . a soma vou usar pra achar essa distancia minima aí
 
     for(int i = 0; i < numcidades; i++){
@@ -52,8 +52,9 @@ int distanciamin(Graph *graph, int numcidades){ //aqui vou calcular a distancia 
     return soma;
 }
 
-int distcidades(Graph *graph, int numcidades, int distmin, int x, int y){ //calcula distancia para as proximas cidades (dps da primeira)
-    int custoatual = getWeightEdge(graph, x, y); //vou usar dps pra retornar o custo estimado final
+int distcidades(Graph *graphoriginal, int numcidades, int x, int y, int custoatual){ //calcula distancia para as proximas cidades (dps da primeira)
+    Graph *graph = cloneGraph(graphoriginal); //esse "graph" na funçao é um auxiliar. como vou fazer alteraçoes nele nao posso usar o original pq nao tenho ctz se esse é realmente o caminho que vou acabar tomando
+    int custocaminho = getWeightEdge(graph, x, y); //vou usar dps pra retornar o custo estimado final
     int altera = 0, aux, flag0 = 0, flagmax = 1, auxmenor; //altera vai guardar uma possivel alteraçao nova que eu faça aq, vou precisar pra estimar o custo dps; aux vai servir pra ver os valores dos vertices no geral; flag0 me diz se teve algum 0 na situaçao; flagmax me diz se teve algo diferente de INT_MAX na situaçao; auxmenor guarda o menor valor na situação 
     for(int j = 0; j < numcidades; j++){ //coloco todos os vertices dessa linha como INT_MAX
         insertEdge(graph, x, j, INT_MAX);
@@ -104,7 +105,60 @@ int distcidades(Graph *graph, int numcidades, int distmin, int x, int y){ //calc
         }
     }
 
-    return (distmin + custoatual + altera); //retorno a distancia minima que calculei na primeira vez + custo pra chegar nessa cidade atual + qualquer alteraçao que eu tenha feito aqui
+    return (custoatual + custocaminho + altera); //retorno o custo que calculei logo antes + custo pra chegar nessa cidade atual + qualquer alteraçao que eu tenha feito aqui
+}
+
+void alteragrafo(Graph *graph, int numcidades, int x, int y, int custoatual){ //mesmo algoritmo do distcidades só que aq ao inves de estimar distancia eu só altero permanentemente meu grafo original pra funcionar o algoritmo mais pra frente
+    int aux, flag0 = 0, flagmax = 1, auxmenor;  
+    for(int j = 0; j < numcidades; j++){ 
+        insertEdge(graph, x, j, INT_MAX);
+    }
+    for(int i = 0; i < numcidades; i++){ 
+        insertEdge(graph, i, y, INT_MAX);
+    }
+    insertEdge(graph, y, x, INT_MAX); 
+
+    for(int i = 0; i < numcidades; i++){
+        auxmenor = getWeightEdge(graph, i, 0);
+        for(int j = 1; j < numcidades; j++){
+            aux = getWeightEdge(graph, i, j);
+            if(auxmenor > aux) auxmenor = aux;
+            if(aux != INT_MAX) flagmax = 0; 
+            if(!aux) flag0 = 1; 
+        }
+        if(flag0 || flagmax){ 
+            flag0 = 0; 
+            flagmax = 1;
+            continue; 
+        }else{ 
+            for(int a = 0; a < numcidades; a++){
+                if(getWeightEdge(graph, i, a) == INT_MAX) continue; //caso seja INT_MAX no bagulho eu nao subtraio, continua como max mesmo
+                insertEdge(graph, i, a, getWeightEdge(graph, i, a) - auxmenor); //recoloco o valor desse vertice como ele menos o valor minimo que achei ali em cima
+            }
+        }
+    }
+
+    for(int j = 0; j < numcidades; j++){ 
+        auxmenor = getWeightEdge(graph, 0, j);
+        for(int i = 1; i < numcidades; i++){
+            aux = getWeightEdge(graph, i, j);
+            if(auxmenor > aux) auxmenor = aux; 
+            if(aux != INT_MAX) flagmax = 0; 
+            if(!aux) flag0 = 1; 
+        }
+        if(flag0 || flagmax){ 
+            flag0 = 0; 
+            flagmax = 1;
+            continue; 
+        }else{ 
+            for(int a = 0; a < numcidades; a++){
+                if(getWeightEdge(graph, a, j) == INT_MAX) continue; 
+                insertEdge(graph, a, j, getWeightEdge(graph, a, j) - auxmenor); 
+            }
+        }
+    }
+
+    return;
 }
 
 int comparaiguais(Graph *graph, int *resp, int *mapa, int numcidades, int comeco, int indice, int pos1, int pos2){ //faz a mesma coisa do guia so que só pra procurar a melhor opçao posterior quando temos dois caminhos de peso igual
@@ -129,12 +183,12 @@ int comparaiguais(Graph *graph, int *resp, int *mapa, int numcidades, int comeco
     else return pos2; //por padrao, se eu chegar no fim aqui e os dois aux forem iguais eu acabo retornando o pos2 (se forem iguais nao faz diferença mesmo)
 }
 
-void guia(Graph *graph, int *resp, int *mapa, int numcidades, int comeco, int indice){ //funçao pra me guiar pelas cidades (pelo melhor caminho dps de ter feito as estimativas nas funçoes de cima)
-    int aux = getWeightEdge(graph, comeco, 0);
+void guia(Graph *graph, int *resp, int *mapa, int numcidades, int comeco, int indice, int distmin){ //funçao pra me guiar pelas cidades (pelo melhor caminho dps de ter feito as estimativas nas funçoes de cima)
+    int aux = distcidades(graph, numcidades, 0, comeco, distmin); //pego o primeiro caminho antes de entrar no for
     int pos = -30; //esse -30 vai fazer sentido dps
     for(int i = 1; i <= numcidades; i++){
         if(mapa[i] == 0) continue; //caso a posição esteja marcada com 0 quer dizer que ja passei ali
-        int comp = getWeightEdge(graph, comeco, i);
+        int comp = distcidades(graph, numcidades, i, comeco, distmin);
         if(comp == INT_MAX) continue;
         if(aux > comp){
             aux = comp; //pego o caminho menor
@@ -147,8 +201,10 @@ void guia(Graph *graph, int *resp, int *mapa, int numcidades, int comeco, int in
     mapa[pos] = 0; //marco a posiçao que passei agora como 0 no mapa
     resp[indice] = pos; //marco a cidade que to indo numa posiçao do vetor resposta
     indice++;
-    guia(graph, resp, mapa, numcidades, pos, indice); 
-    return;
+    distmin = aux; //o distmin aqui vai ter o tamanho do caminho que escolhi nessa iteraçao (levo ele pra proxima)
+    alteragrafo(graph, numcidades, pos, comeco, distmin); //depois de estimar as distancias tenho que alterar o grafo conforme a decisao que tomei (pra qual cidade sigo)
+    guia(graph, resp, mapa, numcidades, pos, indice, distmin); 
+    return; //esse return é só pra garantir, teoricamente nao é pra chegar aqui
 }
 
 void diagonal(Graph *graph, int numcidades){ //so coloca a diagonal principal com o tamanho maximo
@@ -173,7 +229,8 @@ Answer tsp(Graph *graph, int numcidades, int primeira){
     int *resp = malloc(sizeof(int) * (numcidades + 1));
     mapa[0] = 0; //a primeira posição eu vou usar pra marcar em quantas cidades entrei
     for(int i = 1; i <= numcidades; i++) mapa[i] = i;
-    guia(graph, resp, mapa, numcidades, primeira, 0); //dps de entrar aq teoricamente eu ja vou ter o melhor caminho (os numeros vao ser a sequencia de cidades que devo tomar) dentro do *resp
+
+    guia(graph, resp, mapa, numcidades, primeira, 0, distmin); //dps de entrar aq teoricamente eu ja vou ter o melhor caminho (os numeros vao ser a sequencia de cidades que devo tomar) dentro do *resp
     int dist = calculadist(graph, resp, numcidades);
 
     Answer resposta;

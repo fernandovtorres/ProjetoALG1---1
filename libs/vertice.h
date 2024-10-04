@@ -17,6 +17,7 @@ Vertice *createVertice(void);
  * @return:
  *  Vertice **: um array de vertices*/
 Vertice **createVerticeList(int vertices);
+
 static Edge *createEdge(int index, int weight);
 /*
  * Cria uma conexão (aresta) entre dois vértices
@@ -37,6 +38,9 @@ bool createConnection(Vertice *vert, int index, int weight);
  * @return:
  *  int: peso da aresta*/
 int getWeightConnection(Vertice *vert, int vert2);
+
+Vertice *cloneVertice(Vertice *src);
+
 static void deleteEdge(Edge **edge);
 /*
  * Exclui o vértice

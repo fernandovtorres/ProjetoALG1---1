@@ -1,4 +1,5 @@
 #include "../vertice.h"
+#include <limits.h>
 #include <stdlib.h>
 
 struct vertice_ {
@@ -48,16 +49,22 @@ bool createConnection(Vertice *vert, int index, int weight) {
     return true;
   }
   Edge *dummy = vert->head;
-  if (dummy->index >= edge->index) {
+  if (dummy->index > edge->index) {
     edge->next = dummy;
     vert->head = edge;
+  } else if (dummy->index == edge->index) {
+    dummy->weight = weight;
   } else {
     while (dummy->next != NULL) {
-      if (dummy->next->index >= edge->index) {
+      if (dummy->next->index > edge->index) {
         break;
+      } else if (dummy->next->index == edge->index) {
+        dummy->next->weight = edge->weight;
+        return true;
       }
       dummy = dummy->next;
     }
+
     edge->next = dummy->next;
     dummy->next = edge;
   }
@@ -65,7 +72,7 @@ bool createConnection(Vertice *vert, int index, int weight) {
 }
 
 int getWeightConnection(Vertice *vert, int vert2) {
-  int weight = -1;
+  int weight = INT_MAX;
   Edge *dummy = vert->head;
   while (dummy && dummy->index <= vert2) {
     if (dummy->index == vert2) {
@@ -83,6 +90,25 @@ static void deleteEdge(Edge **edge) {
     *edge = NULL;
   }
   return;
+}
+
+Vertice *cloneVertice(Vertice *src) {
+  Vertice *clonedVertice = createVertice();
+  Edge *dummy = src->head;
+  if (!dummy) {
+    return NULL;
+  }
+  Edge *clonedEdge = createEdge(dummy->index, dummy->weight);
+  clonedVertice->head = clonedEdge;
+  Edge *clonedDummy = clonedVertice->head;
+  while (dummy->next != NULL) {
+    dummy = dummy->next;
+    clonedEdge = createEdge(dummy->index, dummy->weight);
+    clonedDummy->next = clonedEdge;
+    clonedDummy = clonedDummy->next;
+  }
+  clonedDummy->next = NULL;
+  return clonedVertice;
 }
 
 void deleteVertice(Vertice **vertice) {
