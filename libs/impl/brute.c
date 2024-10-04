@@ -54,13 +54,13 @@ static int totalDistance(Graph *graph, int *currPath) {
   int total = 0;
   for (int i = 1; i < getNumberVertices(graph); i++) {
     int pesoAtual = getWeightEdge(graph, currPath[i - 1], currPath[i]);
-    if (pesoAtual == -1) {
-      return INT_MAX;
+    if (pesoAtual == INT_MAX) {
+      return pesoAtual;
     }
     total += pesoAtual;
   }
   if (getWeightEdge(graph, currPath[getNumberVertices(graph) - 1],
-                    currPath[0]) == -1) {
+                    currPath[0]) == INT_MAX) {
     return INT_MAX;
   }
   total +=

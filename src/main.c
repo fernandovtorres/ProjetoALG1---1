@@ -11,11 +11,12 @@ int main(void) {
   scanf(" %d", &numberOfCities);
   scanf(" %d", &start);
   scanf(" %d", &edges);
-  Graph *graph = createGraph(numberOfCities, 0, 1);
+  Graph *graphh = createGraph(numberOfCities, 0, 1);
   for (int i = 0; i < edges; i++) {
     scanf(" %d %d %d", &vert1, &vert2, &weight);
-    insertEdge(graph, vert1, vert2, weight);
+    insertEdge(graphh, vert1, vert2, weight);
   }
+  Graph *graph = cloneGraph(graphh);
   inicio = clock();
   Answer *ans = brute_force(graph, start);
   fim = clock();
@@ -23,14 +24,13 @@ int main(void) {
   if (minDist == INT_MAX) {
     printf("Impossível!");
   } else {
-    printf("%d %f\n", numberOfCities, (double)(fim - inicio) / CLOCKS_PER_SEC);
-    /* printf("Cidade Origem: %d\n", start);
+    printf("Cidade Origem: %d\n", start);
     printf("Rota: ");
     for (int i = 0; i < numberOfCities; i++) {
       printf("%d - ", path(ans, i));
     }
     printf("%d\n", start);
-    printf("Menor Distância: %d\n", minDist); */
+    printf("Menor Distância: %d\n", minDist);
   }
   deleteGraph(&graph);
   deleteAnswer(&ans);
