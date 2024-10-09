@@ -1,5 +1,6 @@
 #ifndef BRUTE_H
 #define BRUTE_H
+#include "deque.h"
 #include "graph.h"
 #include <stdlib.h>
 typedef struct answer_ Answer;
@@ -16,8 +17,9 @@ typedef struct answer_ Answer;
  * */
 Answer *brute_force(Graph *graph, int start);
 
-static void bestPath(Graph *graph, Answer **ans, int *currPath, int start);
-static int totalDistance(Graph *graph, int *currPath);
+static void bestPath(Graph *graph, Answer **ans, DEQUE *deque, DEQUE *aux,
+                     int start);
+static int totalDistance(Graph *graph, DEQUE *deque, int start);
 /*
  * Retorna a cidade no caminho dado um index
  * @param:
@@ -26,7 +28,7 @@ static int totalDistance(Graph *graph, int *currPath);
  *
  * @return:
  *  int cidade: inteiro representando o número da cidade*/
-int path(Answer *ans, int index);
+void path(Answer *ans);
 /* Retorna a distância mínima que foi calculada
  * @param:
  *  Answer* ans: struct que guarda a distância mínima

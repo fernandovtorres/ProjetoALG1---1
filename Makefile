@@ -1,5 +1,5 @@
-all: graph brute vertice main
-	gcc -lm ./src/graph.o ./src/brute.o ./src/vertice.o ./src/main.o -o ./src/main -Wall -std=c99
+all: graph brute vertice deque main
+	gcc -lm ./src/graph.o ./src/brute.o ./src/deque.o ./src/vertice.o ./src/main.o -o ./src/main -Wall  -std=c99 
 	rm ./src/*.o
 
 graph:
@@ -10,6 +10,9 @@ brute:
 
 vertice:
 	gcc -c ./libs/impl/vertice.c -o ./src/vertice.o
+
+deque:
+	gcc -c ./libs/impl/deque.c -o ./src/deque.o
 
 main:
 	gcc -c ./src/main.c -o ./src/main.o

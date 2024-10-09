@@ -5,7 +5,7 @@ Sua utilização se justifica por conta de sua capacidade de crescimento não es
 
 - Quais vantagens e limitações a(s) estrutura(s) escolhida(s) apresenta(m)?
 A vantagem do array é a possibilidade de acessar diretamente uma cidade e verificar suas arestas.
-A vantagem da lista é a facilidade no seu processo de inserção.
+A vantagem da lista é a facilidade no seu processo de inserção ordenado.
 A maior desvantagem da lista para esse problema é que para um vértice com um grande número de arestas, o algoritmo de pesquisa se torna consideravelmente lento.
 
 - Explique claramente a lógica utilizada para resolver o problema.

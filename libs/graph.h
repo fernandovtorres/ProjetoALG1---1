@@ -42,8 +42,6 @@ int getWeightEdge(Graph *graph, int vertice1, int vertice2);
  *  int: o numero de vertices do grafo*/
 int getNumberVertices(Graph *graph);
 
-Graph *cloneGraph(Graph *graph);
-
 /*
  * Exclui um grafo e todos os seus vertices
  * @param:

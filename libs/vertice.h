@@ -39,8 +39,6 @@ bool createConnection(Vertice *vert, int index, int weight);
  *  int: peso da aresta*/
 int getWeightConnection(Vertice *vert, int vert2);
 
-Vertice *cloneVertice(Vertice *src);
-
 static void deleteEdge(Edge **edge);
 /*
  * Exclui o vértice

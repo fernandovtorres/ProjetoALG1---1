@@ -11,12 +11,11 @@ int main(void) {
   scanf(" %d", &numberOfCities);
   scanf(" %d", &start);
   scanf(" %d", &edges);
-  Graph *graphh = createGraph(numberOfCities, 0, 1);
+  Graph *graph = createGraph(numberOfCities, 0, 1);
   for (int i = 0; i < edges; i++) {
     scanf(" %d %d %d", &vert1, &vert2, &weight);
-    insertEdge(graphh, vert1, vert2, weight);
+    insertEdge(graph, vert1, vert2, weight);
   }
-  Graph *graph = cloneGraph(graphh);
   inicio = clock();
   Answer *ans = brute_force(graph, start);
   fim = clock();
@@ -26,9 +25,7 @@ int main(void) {
   } else {
     printf("Cidade Origem: %d\n", start);
     printf("Rota: ");
-    for (int i = 0; i < numberOfCities; i++) {
-      printf("%d - ", path(ans, i));
-    }
+    path(ans);
     printf("%d\n", start);
     printf("Menor Distância: %d\n", minDist);
   }

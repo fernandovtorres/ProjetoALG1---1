@@ -1,4 +1,5 @@
 #include "../graph.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 struct graph_ {
@@ -76,15 +77,6 @@ int getNumberVertices(Graph *graph) {
     exit(1);
   }
   return graph->numVertices;
-}
-
-Graph *cloneGraph(Graph *graph) {
-  Graph *newGraph =
-      createGraph(graph->numVertices, graph->isDirected, graph->isWeighted);
-  for (int i = 0; i < graph->numVertices; i++) {
-    newGraph->vertices[i] = cloneVertice(graph->vertices[i]);
-  }
-  return newGraph;
 }
 
 void deleteGraph(Graph **graph) {

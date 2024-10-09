@@ -1,5 +1,6 @@
 #include "../vertice.h"
 #include <limits.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 struct vertice_ {
@@ -90,25 +91,6 @@ static void deleteEdge(Edge **edge) {
     *edge = NULL;
   }
   return;
-}
-
-Vertice *cloneVertice(Vertice *src) {
-  Vertice *clonedVertice = createVertice();
-  Edge *dummy = src->head;
-  if (!dummy) {
-    return NULL;
-  }
-  Edge *clonedEdge = createEdge(dummy->index, dummy->weight);
-  clonedVertice->head = clonedEdge;
-  Edge *clonedDummy = clonedVertice->head;
-  while (dummy->next != NULL) {
-    dummy = dummy->next;
-    clonedEdge = createEdge(dummy->index, dummy->weight);
-    clonedDummy->next = clonedEdge;
-    clonedDummy = clonedDummy->next;
-  }
-  clonedDummy->next = NULL;
-  return clonedVertice;
 }
 
 void deleteVertice(Vertice **vertice) {
