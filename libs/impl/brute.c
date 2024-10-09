@@ -56,11 +56,15 @@ static void bestPath(Graph *graph, Answer *ans, Answer *auxAnswer, DEQUE *aux,
       if (!deque_vazia(auxAnswer->caminho)) {
         distancia = getWeightEdge(graph, dequeAtras(aux),
                                   dequeFrente(auxAnswer->caminho));
+        if (distancia == INT_MAX)
+          return;
       } else {
         distancia = getWeightEdge(graph, dequeAtras(aux), start);
+        if (distancia == INT_MAX) {
+          deque_inserirFrente(aux, deque_removerAtras(aux));
+          continue;
+        }
       }
-      if (distancia == INT_MAX)
-        return;
       auxAnswer->distance += distancia;
       deque_inserirFrente(auxAnswer->caminho, deque_removerAtras(aux));
       bestPath(graph, ans, auxAnswer, aux, start);
