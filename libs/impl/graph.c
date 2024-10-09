@@ -20,7 +20,7 @@ Graph *createGraph(int vertices, bool isDirected, bool isWeighted) {
     return NULL;
   }
   for (int i = 0; i < vertices; i++) {
-    graph->vertices[i] = createVertice();
+    graph->vertices[i] = createVertice(vertices, 1);
     if (!graph->vertices[i]) {
       while (i--) {
         deleteVertice(&graph->vertices[i]);

@@ -17,16 +17,27 @@ typedef struct answer_ Answer;
  * */
 Answer *brute_force(Graph *graph, int start);
 
+/*
+ * Encontra o melhor caminho a partir da permutação das cidades e cálculo dos
+ * caminhos gerados
+ * @param:
+ *  Graph* graph: grafo do problema
+ *  Answer* ans: Struct que conterá a resposta para o problema
+ *  Answer* auxAnswer: Struct auxiliar para avaliar os caminhos durante o
+ * processo de resolução
+ * DEQUE* aux: deque auxiliar utilizado para a permutação
+ *  int start: inteiro representando a cidade de origem*/
 static void bestPath(Graph *graph, Answer *ans, Answer *auxAnswer, DEQUE *aux,
                      int start);
 /*
- * Retorna a cidade no caminho dado um index
+ * realiza um "print" da rota calculada
  * @param:
  *  Answer* ans: struct que guarda o caminho
- *  int index: index referente a posição da cidade no caminho
+ *  int start: inteiro que representa a cidade de inicio e consequentemente o
+ * final
  *
  * @return:
- *  int cidade: inteiro representando o número da cidade*/
+ *  void*/
 void path(Answer *ans, int start);
 /* Retorna a distância mínima que foi calculada
  * @param:

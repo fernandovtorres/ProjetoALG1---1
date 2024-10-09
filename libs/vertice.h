@@ -8,7 +8,7 @@ typedef struct edge_ Edge;
  * @param: void
  * @return:
  *  Vertice *: um ponteiro para o novo vertice*/
-Vertice *createVertice(void);
+Vertice *createVertice(int tamanho, bool ordenada);
 /*
  * Cria um array de vertices
  * @param:
@@ -18,7 +18,7 @@ Vertice *createVertice(void);
  *  Vertice **: um array de vertices*/
 Vertice **createVerticeList(int vertices);
 
-static Edge *createEdge(int index, int weight);
+static Edge createEdge(int index, int weight);
 /*
  * Cria uma conexão (aresta) entre dois vértices
  * @param:
@@ -39,12 +39,5 @@ bool createConnection(Vertice *vert, int index, int weight);
  *  int: peso da aresta*/
 int getWeightConnection(Vertice *vert, int vert2);
 
-static void deleteEdge(Edge **edge);
-/*
- * Exclui o vértice
- * @param:
- *  Vertice **vertice: endereço do vertice que sera excluidp
- *
- * @return: void*/
 void deleteVertice(Vertice **vertice);
 #endif

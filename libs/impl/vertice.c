@@ -1,105 +1,97 @@
 #include "../vertice.h"
 #include <limits.h>
-#include <stdio.h>
 #include <stdlib.h>
-
 struct vertice_ {
-  Edge *head;
+  Edge *edges;
+  int start, end, size;
+  bool ordenada;
 };
 
 struct edge_ {
   int index, weight;
-  Edge *next;
 };
 
-Vertice **createVerticeList(int vertices) {
-  Vertice **verticeList = malloc(sizeof(Vertice *) * vertices);
-  if (!verticeList) {
+Vertice *createVertice(int tamanho, bool ordenada) {
+  Vertice *vertice = (Vertice *)malloc(sizeof(Vertice));
+  if (!vertice)
+    return NULL;
+  vertice->edges = (Edge *)malloc(sizeof(Edge) * tamanho);
+  if (!(vertice->edges)) {
+    free(vertice);
+    vertice = NULL;
     return NULL;
   }
-  return verticeList;
-}
-
-Vertice *createVertice(void) {
-  Vertice *vertice = malloc(sizeof(Vertice));
-  if (!vertice) {
-    return NULL;
-  }
-  vertice->head = NULL;
+  vertice->start = vertice->end = 0;
+  vertice->size = tamanho;
+  vertice->ordenada = ordenada;
   return vertice;
 }
 
-static Edge *createEdge(int index, int weight) {
-  Edge *edge = malloc(sizeof(Edge));
-  if (!edge) {
+Vertice **createVerticeList(int vertices) {
+  Vertice **verticeList = (Vertice **)malloc(sizeof(Vertice *) * vertices);
+  if (!verticeList)
     return NULL;
-  }
-  edge->index = index;
-  edge->weight = weight;
-  edge->next = NULL;
+  return verticeList;
+}
+
+static Edge createEdge(int index, int weight) {
+  Edge edge;
+  edge.index = index;
+  edge.weight = weight;
   return edge;
 }
 
 bool createConnection(Vertice *vert, int index, int weight) {
-  Edge *edge = createEdge(index, weight);
-  if (!edge) {
+  if (vert->end == vert->size)
     return false;
-  }
-  if (vert->head == NULL) {
-    vert->head = edge;
-    return true;
-  }
-  Edge *dummy = vert->head;
-  if (dummy->index > edge->index) {
-    edge->next = dummy;
-    vert->head = edge;
-  } else if (dummy->index == edge->index) {
-    dummy->weight = weight;
-  } else {
-    while (dummy->next != NULL) {
-      if (dummy->next->index > edge->index) {
-        break;
-      } else if (dummy->next->index == edge->index) {
-        dummy->next->weight = edge->weight;
+  Edge edge = createEdge(index, weight);
+  if (vert->start != vert->end) {
+    int left = vert->start;
+    int right = vert->end;
+    while (left < right) {
+      int mid = left + (right - left) / 2;
+      if (vert->edges[mid].index < index)
+        right = mid;
+      else if (vert->edges[mid].index > index)
+        left = mid + 1;
+      else {
+        vert->edges[mid] = edge;
         return true;
       }
-      dummy = dummy->next;
     }
-
-    edge->next = dummy->next;
-    dummy->next = edge;
+    for (int i = vert->end - 1; i >= left; i--) {
+      vert->edges[i + 1] = vert->edges[i];
+    }
+    vert->edges[left] = edge;
+  } else {
+    vert->edges[vert->end] = edge;
   }
+  vert->end++;
   return true;
 }
 
 int getWeightConnection(Vertice *vert, int vert2) {
-  int weight = INT_MAX;
-  Edge *dummy = vert->head;
-  while (dummy && dummy->index <= vert2) {
-    if (dummy->index == vert2) {
-      weight = dummy->weight;
-      break;
+  if (!vert || vert->start == vert->end)
+    return INT_MAX;
+  int left = vert->start;
+  int right = vert->end;
+  while (left < right) {
+    int mid = left + (right - left) / 2;
+    if (vert->edges[mid].index < vert2)
+      right = mid;
+    else if (vert->edges[mid].index > vert2)
+      left = mid + 1;
+    else {
+      return vert->edges[mid].weight;
     }
-    dummy = dummy->next;
   }
-  return weight;
-}
-
-static void deleteEdge(Edge **edge) {
-  if (*edge) {
-    free(*edge);
-    *edge = NULL;
-  }
-  return;
+  return INT_MAX;
 }
 
 void deleteVertice(Vertice **vertice) {
   if (*vertice) {
-    while ((*vertice)->head) {
-      Edge *dummy = (*vertice)->head;
-      (*vertice)->head = (*vertice)->head->next;
-      deleteEdge(&dummy);
-    }
+    free((*vertice)->edges);
+    (*vertice)->edges = NULL;
     free(*vertice);
     *vertice = NULL;
   }

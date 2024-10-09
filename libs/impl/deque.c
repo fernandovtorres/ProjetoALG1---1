@@ -147,17 +147,3 @@ void dequePrintar(DEQUE *deque) {
          deque->deque[(deque->fim - 1 + deque->tamanho) % deque->tamanho]);
   return;
 }
-
-int *transferirArray(DEQUE *deque) {
-  if (!deque)
-    return NULL;
-  int *array = (int *)malloc(sizeof(int) * deque->qntItens);
-  if (!array)
-    return NULL;
-  int i = deque->inicio;
-  for (int j = 0; j < deque->qntItens; j++) {
-    array[j] = deque->deque[i];
-    i = (i + 1) % deque->tamanho;
-  }
-  return array;
-}
