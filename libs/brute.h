@@ -17,9 +17,8 @@ typedef struct answer_ Answer;
  * */
 Answer *brute_force(Graph *graph, int start);
 
-static void bestPath(Graph *graph, Answer **ans, DEQUE *deque, DEQUE *aux,
+static void bestPath(Graph *graph, Answer *ans, Answer *auxAnswer, DEQUE *aux,
                      int start);
-static int totalDistance(Graph *graph, DEQUE *deque, int start);
 /*
  * Retorna a cidade no caminho dado um index
  * @param:
@@ -28,7 +27,7 @@ static int totalDistance(Graph *graph, DEQUE *deque, int start);
  *
  * @return:
  *  int cidade: inteiro representando o número da cidade*/
-void path(Answer *ans);
+void path(Answer *ans, int start);
 /* Retorna a distância mínima que foi calculada
  * @param:
  *  Answer* ans: struct que guarda a distância mínima

@@ -5,7 +5,7 @@
 #include <string.h>
 
 struct answer_ {
-  int minDistance;
+  int distance;
   DEQUE *caminho;
 };
 
@@ -14,83 +14,75 @@ Answer *brute_force(Graph *graph, int start) {
   if (!ans) {
     return NULL;
   }
+  Answer *auxAnswer = malloc(sizeof(Answer));
+  if (!auxAnswer) {
+    return NULL;
+  }
   ans->caminho = deque_criar(getNumberVertices(graph));
-  ans->minDistance = INT_MAX;
-  DEQUE *deque = deque_criar(getNumberVertices(graph));
+  ans->distance = INT_MAX;
+  auxAnswer->caminho = deque_criar(getNumberVertices(graph));
+  auxAnswer->distance = 0;
   DEQUE *aux = deque_criar(getNumberVertices(graph));
   for (int i = 0; i < getNumberVertices(graph); i++) {
+    if (i == start - 1)
+      continue;
     deque_inserirFrente(aux, i + 1);
   } // O(n) sendo n o número de vértices
-  bestPath(graph, &ans, deque, aux, start); // O(n!) -> (n-1)!
-  deque_apagar(&deque);
+  bestPath(graph, ans, auxAnswer, aux, start); // O(n!) -> (n-1)!
+  deleteAnswer(&auxAnswer);
   deque_apagar(&aux);
   return ans;
 }
 
-/* TODO: Começar a calcular o custo do caminho enquanto vai chamando a recursão
- * para que eu só precise comparar no final*/
-static void bestPath(Graph *graph, Answer **ans, DEQUE *deque, DEQUE *aux,
+static void bestPath(Graph *graph, Answer *ans, Answer *auxAnswer, DEQUE *aux,
                      int start) {
-  if (deque_tamanho(aux) == 1) {
-    deque_inserirFrente(deque, deque_removerAtras(aux));
-    int current_distance = totalDistance(graph, deque, start); // O(n)
-    if (current_distance < (*ans)->minDistance) {
-      (*ans)->minDistance = current_distance;
-      deque_apagar(&((*ans)->caminho));
-      (*ans)->caminho = copiaDeque(deque, getNumberVertices(graph));
+  int tamanho = deque_tamanho(aux);
+  if (tamanho == 0) {
+    int finalDistance =
+        getWeightEdge(graph, dequeFrente(auxAnswer->caminho), start);
+    if (finalDistance == INT_MAX)
+      return;
+    path(auxAnswer, start);
+    auxAnswer->distance += finalDistance;
+    if (auxAnswer->distance < ans->distance) {
+      ans->distance = auxAnswer->distance;
+      deque_apagar(&(ans->caminho));
+      ans->caminho = copiaDeque(auxAnswer->caminho, getNumberVertices(graph));
     }
-    deque_inserirFrente(aux, deque_removerFrente(deque));
-    return;
+    auxAnswer->distance -= finalDistance;
   } else {
-    int tam = deque_tamanho(aux);
-    for (int i = 0; i < tam; i++) {
-      deque_inserirFrente(deque, deque_removerAtras(aux));
-      bestPath(graph, ans, deque, aux, start);
-      deque_inserirFrente(aux, deque_removerFrente(deque));
+    for (int i = 0; i < tamanho; i++) {
+      int distancia;
+      if (!deque_vazia(auxAnswer->caminho)) {
+        distancia = getWeightEdge(graph, dequeAtras(aux),
+                                  dequeFrente(auxAnswer->caminho));
+      } else {
+        distancia = getWeightEdge(graph, dequeAtras(aux), start);
+      }
+      if (distancia == INT_MAX)
+        return;
+      auxAnswer->distance += distancia;
+      deque_inserirFrente(auxAnswer->caminho, deque_removerAtras(aux));
+      bestPath(graph, ans, auxAnswer, aux, start);
+      deque_inserirFrente(aux, deque_removerFrente(auxAnswer->caminho));
+      auxAnswer->distance -= distancia;
     }
   }
+  return;
 }
 
-static int totalDistance(Graph *graph, DEQUE *deque, int start) {
-  int total = 0;
-  int *currPath = transferirArray(deque);
-  if (currPath[0] != start) {
-    free(currPath);
-    currPath = NULL;
-    return INT_MAX;
-  }
-  for (int i = 1; i < getNumberVertices(graph); i++) {
-    int pesoAtual = getWeightEdge(graph, currPath[i - 1], currPath[i]);
-    if (pesoAtual == INT_MAX) {
-      free(currPath);
-      currPath = NULL;
-      return pesoAtual;
-    }
-    total += pesoAtual;
-  }
-  if (getWeightEdge(graph, currPath[getNumberVertices(graph) - 1],
-                    currPath[0]) == INT_MAX) {
-    free(currPath);
-    currPath = NULL;
-    return INT_MAX;
-  }
-  total +=
-      getWeightEdge(graph, currPath[getNumberVertices(graph) - 1], currPath[0]);
-  free(currPath);
-  currPath = NULL;
-  return total;
-}
-
-void path(Answer *ans) {
+void path(Answer *ans, int start) {
   if (ans) {
+    printf("%d - ", start);
     dequePrintar(ans->caminho);
+    printf("%d\n", start);
   }
   return;
 }
 
 int getMinDist(Answer *ans) {
   if (ans) {
-    return ans->minDistance;
+    return ans->distance;
   }
   exit(1);
 }

@@ -25,8 +25,7 @@ int main(void) {
   } else {
     printf("Cidade Origem: %d\n", start);
     printf("Rota: ");
-    path(ans);
-    printf("%d\n", start);
+    path(ans, start);
     printf("Menor Distância: %d\n", minDist);
   }
   deleteGraph(&graph);

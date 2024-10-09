@@ -44,6 +44,17 @@ bool deque_cheia(DEQUE *deque) {
   return false;
 }
 
+int dequeFrente(DEQUE *deque) {
+  if (!deque || deque_vazia(deque))
+    exit(1);
+  return deque->deque[(deque->fim - 1 + deque->tamanho) % deque->tamanho];
+}
+int dequeAtras(DEQUE *deque) {
+  if (!deque || deque_vazia(deque))
+    exit(1);
+  return deque->deque[deque->inicio % deque->tamanho];
+}
+
 bool deque_inserirFrente(DEQUE *deque, int valor) {
   if (deque_cheia(deque))
     return false;
@@ -85,7 +96,7 @@ int deque_removerFrente(DEQUE *deque) {
 int deque_removerAtras(DEQUE *deque) {
   if (deque_vazia(deque))
     exit(1);
-  int valor = deque->deque[deque->inicio];
+  int valor = deque->deque[deque->inicio % deque->tamanho];
   deque->inicio = (deque->inicio + 1) % deque->tamanho;
   if (deque->inicio == deque->fim) {
     deque->inicio = -1;

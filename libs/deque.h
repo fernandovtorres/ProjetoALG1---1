@@ -7,6 +7,8 @@ DEQUE *deque_criar(int tamanho);
 void deque_apagar(DEQUE **deque);
 bool deque_vazia(DEQUE *deque);
 bool deque_cheia(DEQUE *deque);
+int dequeFrente(DEQUE *deque);
+int dequeAtras(DEQUE *deque);
 bool deque_inserirFrente(DEQUE *deque, int valor);
 bool deque_inserirAtras(DEQUE *deque, int valor);
 int deque_removerFrente(DEQUE *deque);
