@@ -1,29 +1,27 @@
 #include "../vertice.h"
-#include <limits.h>
-#include <stdlib.h>
 struct vertice_ {
   Edge *edges;
   int start, end, size;
-  bool ordenada;
+  bool sorted;
 };
 
 struct edge_ {
   int index, weight;
 };
 
-Vertice *createVertice(int tamanho, bool ordenada) {
+Vertice *createVertice(int size, bool sorted) {
   Vertice *vertice = (Vertice *)malloc(sizeof(Vertice));
   if (!vertice)
     return NULL;
-  vertice->edges = (Edge *)malloc(sizeof(Edge) * tamanho);
+  vertice->edges = (Edge *)malloc(sizeof(Edge) * size);
   if (!(vertice->edges)) {
     free(vertice);
     vertice = NULL;
     return NULL;
   }
   vertice->start = vertice->end = 0;
-  vertice->size = tamanho;
-  vertice->ordenada = ordenada;
+  vertice->size = size;
+  vertice->sorted = sorted;
   return vertice;
 }
 

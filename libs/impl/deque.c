@@ -3,26 +3,26 @@
 
 struct deque_ {
   int *deque;
-  int inicio, fim, qntItens, tamanho;
+  int start, end, qntItems, size;
 };
 
-DEQUE *deque_criar(int tamanho) {
+DEQUE *createDeque(int size) {
   DEQUE *deque = (DEQUE *)malloc(sizeof(DEQUE));
   if (!deque)
     return NULL;
-  deque->deque = (int *)malloc(sizeof(int) * tamanho);
+  deque->deque = (int *)malloc(sizeof(int) * size);
   if (!(deque->deque)) {
     free(deque);
     deque = NULL;
     return NULL;
   }
-  deque->inicio = -1;
-  deque->fim = deque->qntItens = 0;
-  deque->tamanho = tamanho;
+  deque->start = -1;
+  deque->end = deque->qntItems = 0;
+  deque->size = size;
   return deque;
 }
 
-void deque_apagar(DEQUE **deque) {
+void deleteDeque(DEQUE **deque) {
   if (*deque) {
     free((*deque)->deque);
     (*deque)->deque = NULL;
@@ -32,118 +32,116 @@ void deque_apagar(DEQUE **deque) {
   return;
 }
 
-bool deque_vazia(DEQUE *deque) {
-  if (!deque || deque->inicio == -1)
+bool isEmptyDeque(DEQUE *deque) {
+  if (!deque || deque->start == -1)
     return true;
   return false;
 }
 
-bool deque_cheia(DEQUE *deque) {
-  if (!deque || deque->fim == deque->inicio)
+bool isFullDeque(DEQUE *deque) {
+  if (!deque || deque->end == deque->start)
     return true;
   return false;
 }
 
-int dequeFrente(DEQUE *deque) {
-  if (!deque || deque_vazia(deque))
+int dequeFront(DEQUE *deque) {
+  if (!deque || isEmptyDeque(deque))
     exit(1);
-  return deque->deque[(deque->fim - 1 + deque->tamanho) % deque->tamanho];
+  return deque->deque[(deque->end - 1 + deque->size) % deque->size];
 }
-int dequeAtras(DEQUE *deque) {
-  if (!deque || deque_vazia(deque))
+int dequeBack(DEQUE *deque) {
+  if (!deque || isEmptyDeque(deque))
     exit(1);
-  return deque->deque[deque->inicio % deque->tamanho];
+  return deque->deque[deque->start % deque->size];
 }
 
-bool deque_inserirFrente(DEQUE *deque, int valor) {
-  if (deque_cheia(deque))
+bool dequeInsertFront(DEQUE *deque, int value) {
+  if (isFullDeque(deque))
     return false;
-  if (deque->inicio == -1)
-    deque->inicio = 0;
-  deque->deque[deque->fim] = valor;
-  deque->fim = (deque->fim + 1) % deque->tamanho;
-  deque->qntItens += 1;
+  if (deque->start == -1)
+    deque->start = 0;
+  deque->deque[deque->end] = value;
+  deque->end = (deque->end + 1) % deque->size;
+  deque->qntItems += 1;
   return true;
 }
 
-bool deque_inserirAtras(DEQUE *deque, int valor) {
-  if (deque_cheia(deque))
+bool dequeInsertBack(DEQUE *deque, int value) {
+  if (isFullDeque(deque))
     return false;
-  if (deque->inicio == -1) {
-    deque->inicio = (deque->inicio + deque->tamanho) % deque->tamanho;
-    deque->deque[deque->inicio] = valor;
+  if (deque->start == -1) {
+    deque->start = (deque->start + deque->size) % deque->size;
+    deque->deque[deque->start] = value;
   } else {
-    deque->inicio = (deque->inicio - 1 + deque->tamanho) % deque->tamanho;
-    deque->deque[deque->inicio] = valor;
+    deque->start = (deque->start - 1 + deque->size) % deque->size;
+    deque->deque[deque->start] = value;
   }
-  deque->qntItens += 1;
+  deque->qntItems += 1;
   return true;
 }
 
-int deque_removerFrente(DEQUE *deque) {
-  if (deque_vazia(deque))
+int dequeRemoveFront(DEQUE *deque) {
+  if (isEmptyDeque(deque))
     exit(1);
-  deque->fim = (deque->fim - 1 + deque->tamanho) % deque->tamanho;
-  int valor = deque->deque[deque->fim];
-  if (deque->fim == deque->inicio) {
-    deque->inicio = -1;
-    deque->fim = 0;
+  deque->end = (deque->end - 1 + deque->size) % deque->size;
+  int valor = deque->deque[deque->end];
+  if (deque->end == deque->start) {
+    deque->start = -1;
+    deque->end = 0;
   }
-  deque->qntItens -= 1;
+  deque->qntItems -= 1;
   return valor;
 }
 
-int deque_removerAtras(DEQUE *deque) {
-  if (deque_vazia(deque))
+int dequeRemoveBack(DEQUE *deque) {
+  if (isEmptyDeque(deque))
     exit(1);
-  int valor = deque->deque[deque->inicio % deque->tamanho];
-  deque->inicio = (deque->inicio + 1) % deque->tamanho;
-  if (deque->inicio == deque->fim) {
-    deque->inicio = -1;
-    deque->fim = 0;
+  int valor = deque->deque[deque->start % deque->size];
+  deque->start = (deque->start + 1) % deque->size;
+  if (deque->start == deque->end) {
+    deque->start = -1;
+    deque->end = 0;
   }
-  deque->qntItens -= 1;
+  deque->qntItems -= 1;
   return valor;
 }
 
-int deque_tamanho(DEQUE *deque) {
+int dequeSize(DEQUE *deque) {
   if (deque)
-    return deque->qntItens;
+    return deque->qntItems;
   exit(1);
 }
 
-DEQUE *copiaDeque(DEQUE *origem, int tamanho) {
-  if (!origem) {
+DEQUE *dequeCopy(DEQUE *src, int size) {
+  if (!src) {
     return NULL;
   }
 
-  DEQUE *temp = deque_criar(tamanho);
-  DEQUE *novo = deque_criar(tamanho);
-  while (!deque_vazia(origem)) {
-    int item = deque_removerAtras(origem);
-    deque_inserirFrente(novo, item);
-    deque_inserirFrente(temp, item);
+  DEQUE *temp = createDeque(size);
+  DEQUE *clone = createDeque(size);
+  while (!isEmptyDeque(src)) {
+    int item = dequeRemoveBack(src);
+    dequeInsertFront(clone, item);
+    dequeInsertFront(temp, item);
   }
 
-  while (!deque_vazia(temp)) {
-    int item = deque_removerAtras(temp);
-    deque_inserirFrente(origem, item);
+  while (!isEmptyDeque(temp)) {
+    int item = dequeRemoveBack(temp);
+    dequeInsertFront(src, item);
   }
 
-  deque_apagar(&temp);
+  deleteDeque(&temp);
 
-  return novo;
+  return clone;
 }
 
-void dequePrintar(DEQUE *deque) {
+void dequePrint(DEQUE *deque) {
   if (!deque)
     return;
-  for (int i = deque->inicio;
-       i != (deque->fim - 1 + deque->tamanho) % deque->tamanho;
-       i = (i + 1) % deque->tamanho) {
+  for (int i = deque->start; i != (deque->end - 1 + deque->size) % deque->size;
+       i = (i + 1) % deque->size) {
     printf("%d - ", deque->deque[i]);
   }
-  printf("%d - ",
-         deque->deque[(deque->fim - 1 + deque->tamanho) % deque->tamanho]);
+  printf("%d - ", deque->deque[(deque->end - 1 + deque->size) % deque->size]);
   return;
 }

@@ -1,6 +1,4 @@
 #include "../graph.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 struct graph_ {
   int numVertices;

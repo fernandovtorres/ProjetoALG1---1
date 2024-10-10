@@ -2,7 +2,6 @@
 #define BRUTE_H
 #include "deque.h"
 #include "graph.h"
-#include <stdlib.h>
 typedef struct answer_ Answer;
 /*
  *  Inicia o algoritmo de força bruta
