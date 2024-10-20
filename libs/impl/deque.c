@@ -1,5 +1,6 @@
 #include "../deque.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 struct deque_ {
   int *deque;

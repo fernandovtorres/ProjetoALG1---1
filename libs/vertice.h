@@ -1,18 +1,15 @@
 #ifndef VERTICE_H
 #define VERTICE_H
-#include <limits.h>
 #include <stdbool.h>
-#include <stdlib.h>
 typedef struct vertice_ Vertice;
 typedef struct edge_ Edge;
 /*
  * Cria um vértice
  * @param:
- *  int size: tamanho máximo do vértice
- *  bool sorted: define se o vértice vai ter suas ligações ordenadas
+ *  void
  * @return:
  *  Vertice *: um ponteiro para o novo vertice*/
-Vertice *createVertice(int size, bool sorted);
+Vertice *createVertice(void);
 /*
  * Cria um array de vertices
  * @param:
@@ -22,7 +19,7 @@ Vertice *createVertice(int size, bool sorted);
  *  Vertice **: um array de vertices*/
 Vertice **createVerticeList(int vertices);
 
-static Edge createEdge(int index, int weight);
+static Edge *createEdge(int index, int weight);
 /*
  * Cria uma conexão (aresta) entre dois vértices
  * @param:

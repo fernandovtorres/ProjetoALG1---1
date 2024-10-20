@@ -1,5 +1,7 @@
 #include "../brute.h"
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 struct answer_ {
   int distance;
@@ -7,11 +9,11 @@ struct answer_ {
 };
 
 Answer *brute_force(Graph *graph, int start) {
-  Answer *ans = malloc(sizeof(Answer));
+  Answer *ans = (Answer *)malloc(sizeof(Answer));
   if (!ans) {
     return NULL;
   }
-  Answer *auxAnswer = malloc(sizeof(Answer));
+  Answer *auxAnswer = (Answer *)malloc(sizeof(Answer));
   if (!auxAnswer) {
     return NULL;
   }

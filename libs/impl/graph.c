@@ -1,4 +1,5 @@
 #include "../graph.h"
+#include <stdlib.h>
 
 struct graph_ {
   int numVertices;
@@ -7,7 +8,7 @@ struct graph_ {
 };
 
 Graph *createGraph(int vertices, bool isDirected, bool isWeighted) {
-  Graph *graph = malloc(sizeof(Graph));
+  Graph *graph = (Graph *)malloc(sizeof(Graph));
   if (!graph) {
     return NULL;
   }
@@ -18,7 +19,7 @@ Graph *createGraph(int vertices, bool isDirected, bool isWeighted) {
     return NULL;
   }
   for (int i = 0; i < vertices; i++) {
-    graph->vertices[i] = createVertice(vertices, 1);
+    graph->vertices[i] = createVertice();
     if (!graph->vertices[i]) {
       while (i--) {
         deleteVertice(&graph->vertices[i]);

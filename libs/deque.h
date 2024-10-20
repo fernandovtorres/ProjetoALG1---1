@@ -1,7 +1,6 @@
 #ifndef DEQUE_H
 #define DEQUE_H
 #include <stdbool.h>
-#include <stdlib.h>
 typedef struct deque_ DEQUE;
 /*
  * Cria a Deque

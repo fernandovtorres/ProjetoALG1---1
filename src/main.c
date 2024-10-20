@@ -1,6 +1,11 @@
 #include "../libs/brute.h"
 #include <limits.h>
 #include <stdio.h>
+/*  Integrantes:
+ *    Fernando Valentim Torres - 15452340
+ *    Artur Kenzo Obara Kawazoe - 15652663
+ *    Daniel Jorge Manzano - 15446861
+ */
 
 int main(void) {
   int numberOfCities = 0, vert1 = 0, vert2 = 0, weight = 0, start = 0,
